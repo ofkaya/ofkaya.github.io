@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Hebcal from 'hebcal';
-
+import {
+    NotificationManager,
+  } from "react-notifications";
 import './MainForm.css';
 function MainForm() {
     const [isLoading, setIsLoading] = useState(false);
@@ -12,6 +14,9 @@ function MainForm() {
     const [fullName, setFullName] = useState('');
     const [teamNumber, setTeamNumber] = useState('');
     const [context, setContext] = useState('');
+    const [rank, setRank] = useState('צוער');
+    const [el, setEl] = useState('');
+    const [da, setDa] = useState('');
 
     useEffect(() => {
         if (isLoading) {
@@ -29,58 +34,56 @@ function MainForm() {
 
     function convertToPDF() {
         try {
-            // Replace with your Google Apps Script web app URL
-            const scriptUrl = 'https://script.google.com/macros/s/AKfycbyuwz4lh4sCR8fAVDm5TI_pb3KRL8wAsTgDrjDTyjmBdDOpHNpr0cJ579ByY8lZL89w/exec';
-            setIsLoading(true)
-
-            const currentDate = new Date();
-            const today = new Hebcal.HDate();
-            const hebrewDateStr = today.toString('h');
-            const hebrewDateArray = hebrewDateStr.split(' ');
-
-            // Create a FormData object
-            const formData = new FormData();
-            formData.append('title', title);
-            formData.append('context', context);
-            formData.append('full_name', fullName);
-            formData.append('team_number', teamNumber);
-            formData.append('g_day', currentDate.getDate());
-            formData.append('g_month', "ב" + month_in_hebrow[currentDate.getMonth()]);
-            formData.append('g_year', currentDate.getFullYear());
-            formData.append('h_day', hebrewDateArray[0]);
-            formData.append('h_month', hebrewDateArray[1]);
-            formData.append('h_year', hebrewDateArray[2]);
-
-            axios.post(scriptUrl, formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data', // Set the Content-Type header to multipart/form-data
-                },
-            })
-                .then((response) => {
-                    setIsLoading(false);
-                    console.log(response.data)
-                    // const url = URL.createObjectURL(new Blob([response.data]));
-
-                    // // Create a hidden anchor element to trigger the download
-                    // const a = document.createElement('a');
-                    // a.href = url;
-                    // a.download = 'output.pdf';
-                    // a.style.display = 'none';
-
-                    // // Trigger the click event to start the download
-                    // document.body.appendChild(a);
-                    // a.click();
-
-                    // // Clean up the URL and anchor element
-                    // URL.revokeObjectURL(url);
-                    // document.body.removeChild(a);
-                    window.location.href = response.data;
-
+            if(title!==""&&fullName!==""&&teamNumber!==""&&context!==""&&el!==""&&da!==""&&rank!==""){
+                const scriptUrl = 'https://script.google.com/macros/s/AKfycbyuwz4lh4sCR8fAVDm5TI_pb3KRL8wAsTgDrjDTyjmBdDOpHNpr0cJ579ByY8lZL89w/exec';
+                setIsLoading(true)
+    
+                const currentDate = new Date();
+                const today = new Hebcal.HDate();
+                const hebrewDateStr = today.toString('h');
+                const hebrewDateArray = hebrewDateStr.split(' ');
+    
+                // Create a FormData object
+                const formData = new FormData();
+                formData.append('title', title);
+                formData.append('context', context);
+                formData.append('full_name', fullName);
+                formData.append('el', el);
+                formData.append('da', da);
+                formData.append('rank', rank);
+                formData.append('team_number', teamNumber);
+                formData.append('g_day', currentDate.getDate());
+                formData.append('g_month', "ב" + month_in_hebrow[currentDate.getMonth()]);
+                formData.append('g_year', currentDate.getFullYear());
+                formData.append('h_day', hebrewDateArray[0]);
+                formData.append('h_month', hebrewDateArray[1]);
+                formData.append('h_year', hebrewDateArray[2]);
+    
+                axios.post(scriptUrl, formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data', // Set the Content-Type header to multipart/form-data
+                    },
                 })
-                .catch((error) => {
-                    setIsLoading(false);
-                });
+                    .then((response) => {
+                        setIsLoading(false);
+                        window.location.href = response.data;
+                        NotificationManager.success('הקובץ ירד תוך מספר שניות', 'המתן', 3000);
 
+                        
+    
+                    })
+                    .catch((error) => {
+                        console.error(error)
+                        setIsLoading(false);
+                        NotificationManager.error('לא הצליח לייצר את הקובץ', 'שגיאה', 3000);
+
+                    });
+    
+            }
+            else{
+                NotificationManager.error('בבקשה למלא את כל הפרטים', 'שגיאה', 3000);
+            }
+            
 
         } catch (error) {
             console.error('An error occurred while converting to PDF.');
@@ -101,8 +104,20 @@ function MainForm() {
                 <input type='text' className='form-input' dir='rtl' value={teamNumber} onChange={(value) => { setTeamNumber(value.target.value) }}></input>
             </div>
             <div className='input-block'>
+                <label className='form-input-lable'>דרגה</label>
+                <input type='text' className='form-input' dir='rtl' value={rank} onChange={(value) => { setRank(value.target.value) }}></input>
+            </div>
+            <div className='input-block'>
+                <label className='form-input-lable'>אל</label>
+                <input type='text' className='form-input' dir='rtl' value={el} onChange={(value) => { setEl(value.target.value) }}></input>
+            </div>
+            <div className='input-block'>
+                <label className='form-input-lable'>דע</label>
+                <input type='text' className='form-input' dir='rtl' value={da} onChange={(value) => { setDa(value.target.value) }}></input>
+            </div>
+            <div className='input-block'>
                 <label className='form-input-lable'>תוכן העבודה</label>
-                <textarea className='form-input textarea' dir='rtl' style={{ height: "37vh" }} value={context} onChange={(value) => { setContext(value.target.value) }}></textarea>
+                <textarea className='form-input textarea' dir='rtl' style={{ height: "10vh" }} value={context} onChange={(value) => { setContext(value.target.value) }}></textarea>
             </div>
             <button
                 className={`submit-button ${isLoading ? 'loading' : ''}`}

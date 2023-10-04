@@ -14,7 +14,8 @@ function AppFooter() {
             <div className="text">
                 <p>אֱמֹר מְעַט וַעֲשֵׂה הַרְבֵּה</p>
                 <p>פותח על ידי פלוגה ב’ ברוש 82</p>
-                <p>V1.0.0</p>
+                <a href='https://forms.gle/CKAe4pDf7nHTZ3Q26' dir="rtl" target="_blank" className="link"
+        rel="noreferrer">מצאתם באג? רוצים לדווח על תקלה? לחצו כאן</a>
             </div>
             <div className="right">
                 <div className="image-container">
