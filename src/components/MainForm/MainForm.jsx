@@ -3,13 +3,19 @@ import axios from 'axios';
 import Hebcal from 'hebcal';
 import {
     NotificationManager,
-  } from "react-notifications";
+} from "react-notifications";
 import './MainForm.css';
 function MainForm() {
     const [isLoading, setIsLoading] = useState(false);
     const [dots, setDots] = useState('');
     const month_in_hebrow = ["ינואר", "פברואר", "מרץ", "אפריל", "מאי",
         "יוני", "יולי", "אוגוסט", "ספטמבר", "אוקטובר", "נובמבר", "דצמבר"]
+    const megama_list = ["נחשון", "מעוז", "להב", "גפן"]
+    const gdod_list = ["ברוש", "ארז", "דקל", "הדס", "חרוב", "גפן"]
+
+    const [megama, setMegama] = useState('נחשון');
+    const [gdod, setGdod] = useState('ברוש');
+
     const [title, setTitle] = useState('');
     const [fullName, setFullName] = useState('');
     const [teamNumber, setTeamNumber] = useState('');
@@ -34,15 +40,15 @@ function MainForm() {
 
     function convertToPDF() {
         try {
-            if(title!==""&&fullName!==""&&teamNumber!==""&&context!==""&&el!==""&&da!==""&&rank!==""){
-                const scriptUrl = 'https://script.google.com/macros/s/AKfycbyuwz4lh4sCR8fAVDm5TI_pb3KRL8wAsTgDrjDTyjmBdDOpHNpr0cJ579ByY8lZL89w/exec';
+            if (title !== "" && fullName !== "" && teamNumber !== "" && context !== "" && el !== "" && da !== "" && rank !== "") {
+                const scriptUrl = 'https://script.google.com/macros/s/AKfycbxubmPajVZwnupbOBvFlUyQcFPa-0RPD9LHIBQaFZS2JuVV2e0VAi0f-3rnnAbb51Iz/exec';
                 setIsLoading(true)
-    
+
                 const currentDate = new Date();
                 const today = new Hebcal.HDate();
                 const hebrewDateStr = today.toString('h');
                 const hebrewDateArray = hebrewDateStr.split(' ');
-    
+
                 // Create a FormData object
                 const formData = new FormData();
                 formData.append('title', title);
@@ -58,7 +64,8 @@ function MainForm() {
                 formData.append('h_day', hebrewDateArray[0]);
                 formData.append('h_month', hebrewDateArray[1]);
                 formData.append('h_year', hebrewDateArray[2]);
-    
+                formData.append('megama', megama);
+                formData.append('gdod', gdod);
                 axios.post(scriptUrl, formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data', // Set the Content-Type header to multipart/form-data
@@ -69,8 +76,8 @@ function MainForm() {
                         window.location.href = response.data;
                         NotificationManager.success('הקובץ ירד תוך מספר שניות', 'המתן', 3000);
 
-                        
-    
+
+
                     })
                     .catch((error) => {
                         console.error(error)
@@ -78,12 +85,12 @@ function MainForm() {
                         NotificationManager.error('לא הצליח לייצר את הקובץ', 'שגיאה', 3000);
 
                     });
-    
+
             }
-            else{
+            else {
                 NotificationManager.error('בבקשה למלא את כל הפרטים', 'שגיאה', 3000);
             }
-            
+
 
         } catch (error) {
             console.error('An error occurred while converting to PDF.');
@@ -98,6 +105,31 @@ function MainForm() {
             <div className='input-block'>
                 <label className='form-input-lable'>שם מלא</label>
                 <input type='text' className='form-input' dir='rtl' value={fullName} onChange={(value) => { setFullName(value.target.value) }}></input>
+            </div>
+            <div className='gdod-megama'>
+                <div className='input-block'>
+                    <label className='form-input-lable'>מגמה</label>
+
+                    <select id="dropdown" value={megama} onChange={(event) => { setMegama(event.target.value) }} dir='rtl' className='form-input'>
+                        <option value="">בחר מגמה...</option>
+                        {megama_list.map((option, index) => (
+                            <option key={index} value={option}>
+                                {option}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+                <div className='input-block'>
+                    <label className='form-input-lable'>גדוד</label>
+                    <select id="dropdown" value={gdod} onChange={(event) => { setGdod(event.target.value) }} dir='rtl' className='form-input'>
+                        <option value="">בחר גדוד...</option>
+                        {gdod_list.map((option, index) => (
+                            <option key={index} value={option}>
+                                {option}
+                            </option>
+                        ))}
+                    </select>
+                </div>
             </div>
             <div className='input-block'>
                 <label className='form-input-lable'>צוות</label>

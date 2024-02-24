@@ -45,3 +45,9 @@
     height: 37px;
     width: 100%;
 }
+
+.gdod-megama {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5vw;
+}
