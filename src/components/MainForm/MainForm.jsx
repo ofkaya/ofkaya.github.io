@@ -10,7 +10,7 @@ function MainForm() {
     const [dots, setDots] = useState('');
     const month_in_hebrow = ["ינואר", "פברואר", "מרץ", "אפריל", "מאי",
         "יוני", "יולי", "אוגוסט", "ספטמבר", "אוקטובר", "נובמבר", "דצמבר"]
-    const megama_list = ["נחשון", "מעוז", "להב", "גפן"]
+    const megama_list = ["נבו" ,"נחשון", "מעוז", "להב", "גפן"]
     const gdod_list = ["ברוש", "ארז", "דקל", "הדס", "חרוב", "גפן"]
 
     const [megama, setMegama] = useState('נחשון');
